@@ -13,6 +13,8 @@ module.exports = {
   plugins: ['@typescript-eslint'],
   rules: {
     'import/extensions': 0,
+    'import/prefer-default-export': 0,
+    'comma-dangle': ['error', 'always-multiline'],
   },
   settings: {
     'import/resolver': {

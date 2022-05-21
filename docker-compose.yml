@@ -7,7 +7,6 @@ services:
   node:
     container_name: "${DOCKER_APP}-node"
     build: "./docker/node"
-    restart: "no"
     expose:
       - "9229"
       - "3000"
@@ -23,8 +22,7 @@ services:
     depends_on:
       - mongo
     networks:
-      backend:
-        ipv4_address: "${DOCKER_IPV4_BASE}.5"
+      - backend
   # =======================
   # Mongo containers
   # =======================
@@ -39,8 +37,7 @@ services:
     volumes:
       - ./docker/mongo/data:/data/db
     networks:
-      backend:
-        ipv4_address: "${DOCKER_IPV4_BASE}.10"
+      - backend
   # =======================
   # Mongo express
   # =======================
@@ -50,10 +47,10 @@ services:
     expose:
       - "8081"
     environment:
+      ME_CONFIG_MONGODB_SERVER: "${MONGO_HOST}"
       ME_CONFIG_MONGODB_PORT: "${MONGO_PORT}"
-      ME_CONFIG_MONGODB_ADMINUSERNAME: "${MONGO_USERNAME}"
-      ME_CONFIG_MONGODB_ADMINPASSWORD: "${MONGO_PASSWORD}"
-      ME_CONFIG_MONGODB_URL: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/
+      ME_CONFIG_BASICAUTH_USERNAME: "${MONGO_USERNAME}"
+      ME_CONFIG_BASICAUTH_PASSWORD: "${MONGO_PASSWORD}"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.mongo-express.entrypoints=web"
@@ -62,8 +59,7 @@ services:
     depends_on:
       - mongo
     networks:
-      backend:
-        ipv4_address: "${DOCKER_IPV4_BASE}.15"
+      - backend
   # =======================
   # Nginx
   # =======================
@@ -80,8 +76,7 @@ services:
   #     - "traefik.http.routers.nginx.entrypoints=web"
   #     - "traefik.http.routers.nginx.rule=Host(`admin.${APP_DOMAIN}`)"
   #   networks:
-  #     backend:
-  #       ipv4_address: "${DOCKER_IPV4_BASE}.20"
+  #     - backend
   # =======================
   # Traefik
   # =======================
@@ -99,15 +94,8 @@ services:
       - node
       - nginx
     networks:
-      backend:
-        ipv4_address: "${DOCKER_IPV4_BASE}.2"
+      - backend
 networks:
   backend:
     name: "${DOCKER_APP}-network"
     driver: bridge
-    driver_opts:
-      com.docker.network.enable_ipv4: "true"
-    ipam:
-      driver: default
-      config:
-        - subnet: "${DOCKER_IPV4_BASE}.0/16"
