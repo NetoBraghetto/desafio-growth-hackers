@@ -1,0 +1,113 @@
+version: "3.7"
+
+services:
+  # =======================
+  # Node
+  # =======================
+  node:
+    container_name: "${DOCKER_APP}-node"
+    build: "./docker/node"
+    restart: "no"
+    expose:
+      - "9229"
+      - "3000"
+    volumes:
+      - "./api:/usr/src/app"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.node.entrypoints=web"
+      - "traefik.http.routers.node.rule=Host(`api.${APP_DOMAIN}`)"
+      - "traefik.http.routers.node.service=node"
+      - "traefik.http.services.node.loadbalancer.server.port=3000"
+    command: ["npm", "run", "dev"]
+    depends_on:
+      - mongo
+    networks:
+      backend:
+        ipv4_address: "${DOCKER_IPV4_BASE}.5"
+  # =======================
+  # Mongo containers
+  # =======================
+  mongo:
+    container_name: "${DOCKER_APP}-mongo"
+    build: "./docker/mongo"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "${MONGO_USERNAME}"
+      MONGO_INITDB_ROOT_PASSWORD: "${MONGO_PASSWORD}"
+    expose:
+      - "${MONGO_PORT}"
+    volumes:
+      - ./docker/mongo/data:/data/db
+    networks:
+      backend:
+        ipv4_address: "${DOCKER_IPV4_BASE}.10"
+  # =======================
+  # Mongo express
+  # =======================
+  mongo-express:
+    container_name: "${DOCKER_APP}-mongo-express"
+    image: mongo-express
+    expose:
+      - "8081"
+    environment:
+      ME_CONFIG_MONGODB_PORT: "${MONGO_PORT}"
+      ME_CONFIG_MONGODB_ADMINUSERNAME: "${MONGO_USERNAME}"
+      ME_CONFIG_MONGODB_ADMINPASSWORD: "${MONGO_PASSWORD}"
+      ME_CONFIG_MONGODB_URL: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mongo-express.entrypoints=web"
+      - "traefik.http.routers.mongo-express.rule=Host(`moe.${APP_DOMAIN}`)"
+      - "traefik.http.services.mongo-express.loadbalancer.server.port=8081"
+    depends_on:
+      - mongo
+    networks:
+      backend:
+        ipv4_address: "${DOCKER_IPV4_BASE}.15"
+  # =======================
+  # Nginx
+  # =======================
+  # nginx:
+  #   container_name: "${DOCKER_APP}-nginx"
+  #   build: "./docker/nginx"
+  #   # tty: true
+  #   expose:
+  #     - "80"
+  #   volumes:
+  #     - "./admin/build:/usr/share/nginx/html"
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.nginx.entrypoints=web"
+  #     - "traefik.http.routers.nginx.rule=Host(`admin.${APP_DOMAIN}`)"
+  #   networks:
+  #     backend:
+  #       ipv4_address: "${DOCKER_IPV4_BASE}.20"
+  # =======================
+  # Traefik
+  # =======================
+  traefik:
+    container_name: "${DOCKER_APP}-traefik"
+    image: "traefik:v2.6"
+    ports:
+      - "80:80"
+      # - "443:443"
+      - "8080:8080" # Expose Dashboard development only
+    volumes:
+      - ./docker/traefik/conf:/etc/traefik
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - node
+      - nginx
+    networks:
+      backend:
+        ipv4_address: "${DOCKER_IPV4_BASE}.2"
+networks:
+  backend:
+    name: "${DOCKER_APP}-network"
+    driver: bridge
+    driver_opts:
+      com.docker.network.enable_ipv4: "true"
+    ipam:
+      driver: default
+      config:
+        - subnet: "${DOCKER_IPV4_BASE}.0/16"
