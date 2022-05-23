@@ -5,7 +5,7 @@ const connInfo = config.database.connections[config.database.default];
 
 const conn = mongoose
   .connect(`mongodb://${connInfo.host}:${connInfo.port}/${connInfo.database}`, {
-    authSource: connInfo.database,
+    authSource: 'admin',
     user: connInfo.username,
     pass: connInfo.password,
   })

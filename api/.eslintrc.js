@@ -15,6 +15,7 @@ module.exports = {
     'import/extensions': 0,
     'import/prefer-default-export': 0,
     'comma-dangle': ['error', 'always-multiline'],
+    'class-methods-use-this': 0,
   },
   settings: {
     'import/resolver': {

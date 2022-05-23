@@ -1,10 +1,14 @@
 import mongoose from 'mongoose';
 
-const Categorychema = new mongoose.Schema(
+interface ICategory {
+  name: String;
+}
+
+const CategorySchema = new mongoose.Schema<ICategory>(
   {
-    name: String,
+    name: { type: String, required: true },
   },
   { timestamps: true },
 );
 
-export const Category = mongoose.model('Category', Categorychema);
+export const Category = mongoose.model('Category', CategorySchema);
