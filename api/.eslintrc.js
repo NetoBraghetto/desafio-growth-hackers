@@ -16,6 +16,8 @@ module.exports = {
     'import/prefer-default-export': 0,
     'comma-dangle': ['error', 'always-multiline'],
     'class-methods-use-this': 0,
+    'no-underscore-dangle': ['error', { allow: ['_id'] }],
+    'no-restricted-syntax': ['error', 'LabeledStatement', 'WithStatement'],
   },
   settings: {
     'import/resolver': {

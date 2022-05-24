@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { ModelNotFound } from '../exceptions/ModelNotFound';
 import { Category } from '../models/Category';
 
 export class CategoryController {
@@ -8,6 +9,9 @@ export class CategoryController {
 
   public async view(req: Request<{ id: string }>, res: Response) {
     const category = await Category.findById(req.params.id).exec();
+    if (!category) {
+      throw new ModelNotFound();
+    }
     res.status(200).json(category);
   }
 
@@ -18,18 +22,22 @@ export class CategoryController {
   public async update(req: Request<{ id: string }>, res: Response) {
     const category = await Category.findById(req.params.id).exec();
     if (!category) {
-      throw new Error('');
+      throw new ModelNotFound();
     }
-    category.name = 'asd';
+    // const updated = Category.fill(category, Category.fillable());
+    // console.log(Category.me);
+    // console.log(updated);
+    // console.log(Object.keys(Category.schema.paths));
+    category.name = req.body.on;
     res.status(200).json(await category.save());
   }
 
   public async delete(req: Request<{ id: string }>, res: Response) {
     const category = await Category.findById(req.params.id).exec();
     if (!category) {
-      throw new Error('');
+      throw new ModelNotFound();
     }
-    await Category.remove().exec();
+    await Category.deleteOne({ _id: category._id }).exec();
     res.status(200).json(category);
   }
 }

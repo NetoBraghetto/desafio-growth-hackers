@@ -6,4 +6,5 @@
 !.yarn/versions
 
 /.env
+/.env.testing
 /.env-*
