@@ -1,0 +1,8 @@
+@each $weight, $gray in $grays {
+    .bg-gray-#{$weight} {
+        background-color: $gray;
+    }
+}
+.custom-scrollbar{
+    @include scrollbar();
+}
