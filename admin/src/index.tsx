@@ -9,7 +9,7 @@ import { createBrowserHistory } from 'history';
 // import { routes } from 'routes';
 import { AppLayout } from 'views/layout/AppLayout';
 import 'assets/scss/app.scss';
-import { Home } from 'views/Home';
+import { routes } from 'routes';
 
 const history = createBrowserHistory();
 
@@ -22,21 +22,10 @@ root.render(
     <HistoryRouter history={history}>
       <Routes>
         <Route element={<AppLayout />}>
-          <Route path="/" element={<Home />} />
-          {/* <Route
-            path={routes.customerList.path}
-            element={<routes.customerList.Handler />}
-          />
-          <Route
-            path={routes.register.path}
-            element={<routes.register.Handler />}
-          />
-          <Route
-            path={routes.customerEdit.path}
-            element={<routes.customerEdit.Handler />}
-          /> */}
+          <Route path={routes.home.path} element={<routes.home.Handler />} />
+          <Route path={routes.categories.path} element={<routes.categories.Handler />} />
         </Route>
-        {/* <Route path={routes._404.path} element={<routes._404.Handler />} /> */}
+        <Route path={routes.e404.path} element={<routes.e404.Handler />} />
       </Routes>
     </HistoryRouter>
   </React.StrictMode>,

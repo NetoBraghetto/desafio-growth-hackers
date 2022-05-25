@@ -22,6 +22,7 @@ module.exports = {
     'no-restricted-syntax': ['error', 'LabeledStatement', 'WithStatement'],
     'import/no-extraneous-dependencies': 0,
     'react/react-in-jsx-scope': 0,
+    'react/jsx-no-bind': 0,
     'react/jsx-filename-extension': [
       2,
       { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
