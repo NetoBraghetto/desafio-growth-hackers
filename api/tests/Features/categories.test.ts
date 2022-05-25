@@ -1,12 +1,8 @@
-/* eslint-disable import/first */
-import dotenv from 'dotenv';
-import path from 'path';
-
-dotenv.config({ path: path.resolve(__dirname, './../../.env.testing') });
+import '../setup';
 import request from 'supertest';
 import { clearDatabase, closeDatabase, connect } from '../db';
+import { Category, ICategory } from '../../src/models/Category';
 import app from '../../src/app';
-import { Category } from '../../src/models/Category';
 
 describe('Categories features', () => {
   beforeAll(async () => connect());
@@ -16,12 +12,12 @@ describe('Categories features', () => {
   afterAll(async () => closeDatabase());
 
   it('Should list categories', async () => {
-    const inserts = [
+    const inserts: ICategory[] = [
       { name: 'Category 1' },
       { name: 'Category 2' },
       { name: 'Category 3' },
     ];
-    Category.insertMany(inserts);
+    await Category.insertMany(inserts);
     const response = await request(app).get('/categories');
     expect(response.statusCode).toBe(200);
     expect(response.body.length).toBe(inserts.length);
@@ -45,7 +41,7 @@ describe('Categories features', () => {
 
     const response = await request(app)
       .put(`/categories/${category._id}`)
-      .send({ name: undefined });
+      .send({ name: null });
     expect(response.statusCode).toBe(422);
 
     const cat = await Category.findById(category._id);
@@ -71,7 +67,7 @@ describe('Categories features', () => {
 
     const response = await request(app)
       .put(`/categories/${category._id}`)
-      .send({ name: change });
+      .send({ name: change, vingo: 'dins' });
     expect(response.statusCode).toBe(200);
     expect(response.body.name).toBe(change);
   });

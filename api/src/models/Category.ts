@@ -1,26 +1,22 @@
-import mongoose, { Model } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
+import { IDocumentModel } from './Model';
+import { IProduct } from './Product';
 
-interface ICategory {
+export interface ICategory {
   name: String;
+  products?: IProduct[];
 }
-interface ICategoryModel extends Model<ICategory> {
-  fillable(): String[];
-  // fill(category: ICategory, fields: String[]): void;
-}
+interface ICategoryModel extends IDocumentModel<ICategory> {}
 
 const CategorySchema = new mongoose.Schema<ICategory, ICategoryModel>(
   {
     name: { type: String, required: true },
+    products: [{ type: Schema.Types.ObjectId, ref: 'Product' }],
   },
   { timestamps: true },
 );
 
 CategorySchema.static('fillable', () => ['name']);
-
-// CategorySchema.static('fill', (category: ICategory, fields: String[]) => {
-//   console.log(category, fields);
-//   // console.log(category.fillable());
-// });
 
 export const Category = mongoose.model<ICategory, ICategoryModel>(
   'Category',

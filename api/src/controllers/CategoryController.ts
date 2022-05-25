@@ -16,7 +16,13 @@ export class CategoryController {
   }
 
   public async store(req: Request, res: Response) {
-    res.status(201).json(await Category.create(req.body));
+    const data: Record<string, any> = {};
+    Category.fillable().forEach((field: string) => {
+      if (req.body[field] !== undefined) {
+        data[field] = req.body[field];
+      }
+    });
+    res.status(201).json(await Category.create(data));
   }
 
   public async update(req: Request<{ id: string }>, res: Response) {
@@ -24,11 +30,12 @@ export class CategoryController {
     if (!category) {
       throw new ModelNotFound();
     }
-    // const updated = Category.fill(category, Category.fillable());
-    // console.log(Category.me);
-    // console.log(updated);
-    // console.log(Object.keys(Category.schema.paths));
-    category.name = req.body.on;
+    Category.fillable().forEach((field: string) => {
+      if (req.body[field] !== undefined) {
+        category.set(field, req.body[field]);
+      }
+    });
+
     res.status(200).json(await category.save());
   }
 
