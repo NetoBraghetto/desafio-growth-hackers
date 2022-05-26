@@ -1,5 +1,3 @@
-// import { notification } from 'antd';
-
 import { ReactNode } from 'react';
 import { ToastPosition } from 'react-bootstrap/esm/ToastContainer';
 import EventManager from './eventManager';
@@ -40,7 +38,7 @@ export class ToastService {
     EventManager.notify(this.EVENTS.update, this.notifications);
   }
 
-  success(body: ReactNode, title?: ReactNode, timeout?: number, position?: NotificatonPositions) {
+  success(body: ReactNode, title?: ReactNode, timeout?: number, position?: ToastPosition) {
     this.notify({
       title,
       body,
@@ -49,7 +47,7 @@ export class ToastService {
     }, timeout);
   }
 
-  danger(body: ReactNode, title?: ReactNode, timeout?: number, position?: NotificatonPositions) {
+  danger(body: ReactNode, title?: ReactNode, timeout?: number, position?: ToastPosition) {
     this.notify({
       title,
       body,
@@ -58,7 +56,7 @@ export class ToastService {
     }, timeout);
   }
 
-  warning(body: ReactNode, title?: ReactNode, timeout?: number, position?: NotificatonPositions) {
+  warning(body: ReactNode, title?: ReactNode, timeout?: number, position?: ToastPosition) {
     this.notify({
       title,
       body,
@@ -67,7 +65,7 @@ export class ToastService {
     }, timeout);
   }
 
-  info(body: ReactNode, title?: ReactNode, timeout?: number, position?: NotificatonPositions) {
+  info(body: ReactNode, title?: ReactNode, timeout?: number, position?: ToastPosition) {
     this.notify({
       title,
       body,
