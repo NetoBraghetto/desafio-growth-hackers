@@ -34,7 +34,8 @@ module.exports = {
     ],
     'import/no-unresolved': 0,
     'react/jsx-props-no-spreading': 1,
-    'react/require-default-props': 1,
+    'react/no-array-index-key': 1,
+    'react/require-default-props': 0,
   },
   settings: {
     'import/resolver': {

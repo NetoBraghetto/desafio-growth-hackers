@@ -3,7 +3,7 @@ import { Axios, AxiosPromise } from 'axios';
 export type RequestStatuses = 'idle' | 'pending' | 'success' | 'error';
 
 export interface IRestService {
-  get: () => AxiosPromise,
+  list: () => AxiosPromise,
   find: (id: string | number) => AxiosPromise,
   save: (data: FormData | Record<string, unknown>) => AxiosPromise,
   store: (data: FormData | Record<string, unknown>) => AxiosPromise,
@@ -25,7 +25,7 @@ export abstract class RestService<M> implements IRestService {
     return this.client.get(`${this.serviceRoute}/${id}`);
   }
 
-  get(): AxiosPromise<M[]> {
+  list(): AxiosPromise<M[]> {
     return this.client.get(this.serviceRoute);
   }
 
@@ -33,7 +33,7 @@ export abstract class RestService<M> implements IRestService {
     return this.client.post(this.serviceRoute, data);
   }
 
-  update(data: Record<string, unknown> | FormData): AxiosPromise<M> {
+  update(data: FormData | Record<string, unknown>): AxiosPromise<M> {
     const id = data instanceof FormData
       ? data.get('_id')
       : data._id;
@@ -44,7 +44,7 @@ export abstract class RestService<M> implements IRestService {
     return this.client.delete(`${this.serviceRoute}/${id}`);
   }
 
-  save(data: Record<string, unknown> | FormData): AxiosPromise<M> {
+  save(data: FormData | Record<string, unknown>): AxiosPromise<M> {
     const id = data instanceof FormData
       ? data.get('_id')
       : data._id;

@@ -24,6 +24,7 @@ root.render(
         <Route element={<AppLayout />}>
           <Route path={routes.home.path} element={<routes.home.Handler />} />
           <Route path={routes.categories.path} element={<routes.categories.Handler />} />
+          <Route path={routes.categoriesView.path} element={<routes.categoriesView.Handler />} />
         </Route>
         <Route path={routes.e404.path} element={<routes.e404.Handler />} />
       </Routes>

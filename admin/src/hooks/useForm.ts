@@ -13,30 +13,18 @@ export type StateLinkable = {
 export function useForm<M>(
   service: IRestService,
   initialState: M,
-// id?: number | string,
-// onFetch?: (data: M) => M,
+  id?: number | string,
 ) : {
   status: RequestStatuses,
   state: M,
-  // errors: FormErrors,
+  errors: FormErrors,
   link: ((field: keyof M, name?: string) => StateLinkable),
-  // submit: (data: M) => Promise<AxiosResponse>,
+  submit: (data: FormData | Record<string, unknown>) => Promise<AxiosResponse>,
   setStatus: (status: RequestStatuses) => void,
   } {
   const [status, setStatus] = useState<RequestStatuses>('idle');
   const [state, setState] = useState<M>(initialState);
-  // const [errors, setErrors] = useState<FormErrors>({});
-
-  // function onValidationError(validationErrors: ValidationError) {
-  //   setStatus('error');
-  //   const errors: FormErrors = {};
-  //   validationErrors.inner.forEach((err: ValidationError) => {
-  //     if (err.path) {
-  //       errors[err.path] = err.message;
-  //     }
-  //   });
-  //   setErrors(errors);
-  // }
+  const [errors, setErrors] = useState<FormErrors>({});
 
   function changeState(field: keyof M, value: unknown) {
     setState({
@@ -47,7 +35,7 @@ export function useForm<M>(
 
   function link(field: keyof M, name?: string) {
     return {
-      name: name || field,
+      name: name || field.toString(),
       value: state[field] || '',
       onChange: (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         changeState(field, e.target.value);
@@ -55,43 +43,40 @@ export function useForm<M>(
     };
   }
 
-  // function submit(data: M) : Promise<AxiosResponse> {
-  //   setStatus('pending');
-  //   setErrors({});
-  //   return new Promise((resolve, reject) => {
-  //     validationSchema.validate(state, { abortEarly: false }).then(() => {
-  //       service.save(data).then((res: AxiosResponse) => {
-  //         setStatus('success');
-  //         resolve(res);
-  //       }).catch((err: AxiosError) => {
-  //         setStatus('error');
-  //         reject(err); // Handle server error
-  //       });
-  //     })
-  //       .catch(onValidationError);
-  //   });
-  // }
+  function submit(data: FormData | Record<string, unknown>) : Promise<AxiosResponse<M>> {
+    setStatus('pending');
+    setErrors({});
+    return new Promise((resolve, reject) => {
+      service.save(data).then((res: AxiosResponse<M>) => {
+        setStatus('success');
+        setState(initialState);
+        resolve(res);
+      }).catch((err: AxiosError) => {
+        setStatus('error');
+        reject(err); // Handle server error
+      });
+    });
+  }
 
-  // useEffect(() => {
-  //   // return;
-  //   if (!id) return;
+  useEffect(() => {
+    if (!id) return;
 
-  //   setStatus('pending');
-  //   service.find(id).then((res: AxiosResponse) => {
-  //     setStatus('idle');
-  //     setState(onFetch ? onFetch(res.data) : res.data);
-  //   }).catch((err: AxiosError) => {
-  //     setStatus('error');
-  //     // Handle server error
-  //   });
-  // }, [service, id, onFetch]);
+    setStatus('pending');
+    service.find(id).then((res: AxiosResponse<M>) => {
+      setStatus('idle');
+      setState(res.data);
+    }).catch((err: AxiosError) => {
+      setStatus('error');
+      // Handle server error
+    });
+  }, [service, id]);
 
   return {
     status,
     state,
-    //   errors,
+    errors,
     setStatus,
-    //   submit,
+    submit,
     link,
   };
 }

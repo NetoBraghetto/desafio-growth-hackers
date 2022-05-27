@@ -1,9 +1,9 @@
+import { AxiosError, AxiosResponse } from 'axios';
 import { TextInput } from 'components/form/TextInput';
 import { LoadingWrapper } from 'components/LoadingWrapper';
 import { useForm } from 'hooks/useForm';
 import {
-  ChangeEvent,
-  FormEvent, useEffect, useRef, useState,
+  ChangeEvent, FormEvent, useEffect, useRef, useState,
 } from 'react';
 import {
   Button, Col, FormControl, InputGroup, Row,
@@ -11,9 +11,22 @@ import {
 import { BsPlus } from 'react-icons/bs';
 import categoryService, { Category } from 'services/categoryService';
 
-export function CategoriesForm() {
-  const { state, link } = useForm<Category>(categoryService, categoryService.getNewModelInstance());
-  const [name, setName] = useState<string>('');
+export function CategoriesForm({
+  onSubmitSuccess,
+  onSubmitFail,
+  id,
+}: {
+  onSubmitSuccess?: (res: AxiosResponse<Category>) => void;
+  onSubmitFail?: (err: AxiosError) => void;
+  id?: string | number
+}) {
+  const {
+    state, status, link, submit,
+  } = useForm<Category>(
+    categoryService,
+    categoryService.getNewModelInstance(),
+    id,
+  );
   const input = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -23,32 +36,31 @@ export function CategoriesForm() {
     input.current.focus();
   });
 
-  // function onChangeName(e: ChangeEvent<HTMLInputElement>) {
-  //   setName(e.target.value);
-  // }
-
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    // categoryService
+    submit({ ...state })
+      .then((res) => {
+        input.current?.focus();
+        if (onSubmitSuccess) {
+          onSubmitSuccess(res);
+        }
+      })
+      .catch(onSubmitFail);
   }
 
-  const nameLink = link('name');
-
   return (
-    <LoadingWrapper loading={false}>
+    <LoadingWrapper loading={status === 'pending'}>
       <form onSubmit={onSubmit}>
         <Row>
           <Col md={6}>
             <InputGroup>
               <TextInput
                 link={link('name')}
-                // ref={input}
                 extraProps={{
                   ref: input,
                   placeholder: 'Digite o nome da categoria e pressione Enter',
                 }}
               />
-              {/* <FormControl onChange={onChangeName} value={name}  /> */}
               <Button type="submit" variant="outline-primary">
                 <BsPlus />
                 {' '}
