@@ -1,43 +1,66 @@
-import { CategoriesForm } from 'components/categories/Form';
 import { Table, TableColumn } from 'components/Table';
 import { useList } from 'hooks/useList';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Button, Placeholder } from 'react-bootstrap';
 import { BsPencilSquare, BsPlus, BsTrash } from 'react-icons/bs';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import api from 'services/api';
 import categoryService, { Category } from 'services/categoryService';
+import { Product, ProductService } from 'services/productService';
 
 export function CategoriesView() {
   const params = useParams<{id: string}>();
+  const productService = useMemo(() => new ProductService(api, `/categories/${params.id}/products`), [params.id]);
   const [category, setCategory] = useState<Category>();
-  // const { collection, fetch } = useList<Category>(categoryService);
-  // const columns: TableColumn[] = [
-  //   {
-  //     label: 'Nome',
-  //     field: 'name',
-  //     render: (category) => (
-  //       <Link to="/">{ category.name }</Link>
-  //     ),
-  //   },
-  //   {
-  //     label: 'Editar',
-  //     field: 'edit',
-  //     thStyle: { width: '120px', textAlign: 'center' },
-  //     render: () => (
-  //       <div className="text-center"><Button size="sm"
-  // variant="outline-primary"><BsPencilSquare /></Button></div>
-  //     ),
-  //   },
-  //   {
-  //     label: 'Excluir',
-  //     field: 'delete',
-  //     thStyle: { width: '120px', textAlign: 'center' },
-  //     render: () => (
-  //       <div className="text-center"><Button size="sm"
-  // variant="outline-danger"><BsTrash /></Button></div>
-  //     ),
-  //   },
-  // ];
+  const { collection, status } = useList<Product>(productService);
+  const columns: TableColumn[] = [
+    {
+      label: 'Nome',
+      field: 'name',
+    },
+    {
+      label: 'Preço',
+      field: 'price',
+      render: (product) => (
+        <span>
+          R$
+          { product.price }
+        </span>
+      ),
+    },
+    {
+      label: 'Editar',
+      field: 'edit',
+      thStyle: { width: '120px', textAlign: 'center' },
+      render: () => (
+        <div className="text-center">
+          <Button
+            size="sm"
+            variant="outline-primary"
+          >
+            <BsPencilSquare />
+          </Button>
+
+        </div>
+      ),
+    },
+    {
+      label: 'Excluir',
+      field: 'delete',
+      thStyle: { width: '120px', textAlign: 'center' },
+      render: () => (
+        <div className="text-center">
+          <Button
+            size="sm"
+            variant="outline-danger"
+          >
+            <BsTrash />
+          </Button>
+
+        </div>
+      ),
+    },
+  ];
 
   useEffect(() => {
     if (!params.id) return;
@@ -87,15 +110,15 @@ export function CategoriesView() {
           Adicionar produto
         </Button>
       </div>
-      {/* <div className="mb-3">
-        <CategoriesForm onSubmitSuccess={fetch} />
-      </div>
+      <hr />
       <div className="mb-3">
+        <h2 className="h4">Produtos associados</h2>
         <Table
+          loading={status === 'pending'}
           collection={collection}
           columns={columns}
         />
-      </div> */}
+      </div>
     </div>
   );
 }

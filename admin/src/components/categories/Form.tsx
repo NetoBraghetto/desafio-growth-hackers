@@ -3,10 +3,10 @@ import { TextInput } from 'components/form/TextInput';
 import { LoadingWrapper } from 'components/LoadingWrapper';
 import { useForm } from 'hooks/useForm';
 import {
-  ChangeEvent, FormEvent, useEffect, useRef, useState,
+  FormEvent, useEffect, useRef,
 } from 'react';
 import {
-  Button, Col, FormControl, InputGroup, Row,
+  Button, Col, InputGroup, Row,
 } from 'react-bootstrap';
 import { BsPlus } from 'react-icons/bs';
 import categoryService, { Category } from 'services/categoryService';

@@ -8,7 +8,7 @@ export function TextInput({
 } : {
   link: StateLinkable,
   error?: string,
-  extraProps: any,
+  extraProps?: any,
 }) {
   const { name, value, onChange } = link;
 
