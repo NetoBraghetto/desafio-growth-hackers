@@ -3,7 +3,7 @@ import { Toast as BSToast, ToastContainer } from 'react-bootstrap';
 import EventManager from 'services/eventManager';
 import toastService, { Toast } from 'services/toastService';
 
-export function Notificaition() {
+export function Toasts() {
   const [toasts, setNotifications] = useState<Toast[]>([]);
 
   useEffect(() => {

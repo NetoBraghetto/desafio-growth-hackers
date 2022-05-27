@@ -6,6 +6,7 @@ import {
   FormEvent, useMemo,
 } from 'react';
 import {
+  Button,
   Col, Row,
 } from 'react-bootstrap';
 import api from 'services/api';
@@ -45,7 +46,20 @@ export function ProductsForm({
           <Col md={6}>
             <TextInput
               link={link('name')}
+              extraProps={{ placeholder: 'Nome do produto' }}
             />
+          </Col>
+          <Col md={6}>
+            <TextInput
+              link={link('price')}
+              extraProps={{ placeholder: 'preço' }}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col md={12}>
+            <hr />
+            <Button type="submit">Salvar</Button>
           </Col>
         </Row>
       </form>

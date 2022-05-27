@@ -6,9 +6,8 @@ import {
   FormEvent, useEffect, useRef,
 } from 'react';
 import {
-  Button, Col, InputGroup, Row,
+  Button, InputGroup,
 } from 'react-bootstrap';
-import { BsPlus } from 'react-icons/bs';
 import categoryService, { Category } from 'services/categoryService';
 
 export function CategoriesForm({
@@ -51,24 +50,18 @@ export function CategoriesForm({
   return (
     <LoadingWrapper loading={status === 'pending'}>
       <form onSubmit={onSubmit}>
-        <Row>
-          <Col md={6}>
-            <InputGroup>
-              <TextInput
-                link={link('name')}
-                extraProps={{
-                  ref: input,
-                  placeholder: 'Digite o nome da categoria e pressione Enter',
-                }}
-              />
-              <Button type="submit" variant="outline-primary">
-                <BsPlus />
-                {' '}
-                Adicionar
-              </Button>
-            </InputGroup>
-          </Col>
-        </Row>
+        <InputGroup>
+          <TextInput
+            link={link('name')}
+            extraProps={{
+              ref: input,
+              placeholder: 'Digite o nome da categoria e pressione Enter',
+            }}
+          />
+          <Button type="submit" variant="outline-primary">
+            Salvar
+          </Button>
+        </InputGroup>
       </form>
     </LoadingWrapper>
   );

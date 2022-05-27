@@ -10,9 +10,9 @@ export type Toast = {
 };
 
 export class ToastService {
-  notifications: Toast[] = [];
+  toasts: Toast[] = [];
 
-  defaultDuation: number = 4500;
+  defaultDuation = 4500;
 
   defaultPosition: ToastPosition = 'top-end';
 
@@ -21,9 +21,9 @@ export class ToastService {
   };
 
   notify(notification: Toast, timeout: number | null = null) {
-    this.notifications.push(notification);
+    this.toasts.push(notification);
     const tmo = timeout || this.defaultDuation;
-    EventManager.notify(this.EVENTS.update, this.notifications);
+    EventManager.notify(this.EVENTS.update, this.toasts);
 
     if (tmo) {
       window.setTimeout(() => {
@@ -33,9 +33,9 @@ export class ToastService {
   }
 
   remove(notification: Toast) {
-    const index = this.notifications.indexOf(notification);
-    this.notifications.splice(index, 1);
-    EventManager.notify(this.EVENTS.update, this.notifications);
+    const index = this.toasts.indexOf(notification);
+    this.toasts.splice(index, 1);
+    EventManager.notify(this.EVENTS.update, this.toasts);
   }
 
   success(body: ReactNode, title?: ReactNode, timeout?: number, position?: ToastPosition) {

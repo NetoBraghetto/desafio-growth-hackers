@@ -5,6 +5,7 @@
 // import { Button, Nav, Spinner } from 'react-bootstrap';
 // import { Redirect } from 'helpers/Redirect';
 
+import { Toasts } from 'components/Toasts';
 import { Outlet } from 'react-router';
 import { Sidebar } from './Sidebar';
 
@@ -37,6 +38,7 @@ export function AppLayout() {
           </div>
         </main>
       </div>
+      <Toasts />
     </div>
   );
 }

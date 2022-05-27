@@ -1,66 +1,12 @@
-import { Table, TableColumn } from 'components/Table';
-import { useList } from 'hooks/useList';
-import { useEffect, useMemo, useState } from 'react';
-import { Button, Placeholder } from 'react-bootstrap';
-import { BsPencilSquare, BsPlus, BsTrash } from 'react-icons/bs';
+import { ProductsList } from 'components/products/List';
+import { useEffect, useState } from 'react';
+import { Placeholder } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
-import api from 'services/api';
 import categoryService, { Category } from 'services/categoryService';
-import { Product, ProductService } from 'services/productService';
 
 export function CategoriesView() {
   const params = useParams<{id: string}>();
-  const productService = useMemo(() => new ProductService(api, `/categories/${params.id}/products`), [params.id]);
   const [category, setCategory] = useState<Category>();
-  const { collection, status } = useList<Product>(productService);
-  const columns: TableColumn[] = [
-    {
-      label: 'Nome',
-      field: 'name',
-    },
-    {
-      label: 'Preço',
-      field: 'price',
-      render: (product) => (
-        <span>
-          R$
-          { product.price }
-        </span>
-      ),
-    },
-    {
-      label: 'Editar',
-      field: 'edit',
-      thStyle: { width: '120px', textAlign: 'center' },
-      render: () => (
-        <div className="text-center">
-          <Button
-            size="sm"
-            variant="outline-primary"
-          >
-            <BsPencilSquare />
-          </Button>
-
-        </div>
-      ),
-    },
-    {
-      label: 'Excluir',
-      field: 'delete',
-      thStyle: { width: '120px', textAlign: 'center' },
-      render: () => (
-        <div className="text-center">
-          <Button
-            size="sm"
-            variant="outline-danger"
-          >
-            <BsTrash />
-          </Button>
-
-        </div>
-      ),
-    },
-  ];
 
   useEffect(() => {
     if (!params.id) return;
@@ -71,7 +17,7 @@ export function CategoriesView() {
       });
   }, [params.id]);
 
-  if (!category) {
+  if (!category?._id) {
     return (
       <div>
         <div className="mb-5">
@@ -100,25 +46,10 @@ export function CategoriesView() {
 
   return (
     <div>
-      <div className="d-flex align-items-start justify-content-between">
-        <h1 className="display-6 fw-light mb-3">
-          { category.name }
-        </h1>
-        <Button>
-          <BsPlus size={23} />
-          {' '}
-          Adicionar produto
-        </Button>
-      </div>
-      <hr />
-      <div className="mb-3">
-        <h2 className="h4">Produtos associados</h2>
-        <Table
-          loading={status === 'pending'}
-          collection={collection}
-          columns={columns}
-        />
-      </div>
+      <h1 className="display-6 fw-light mb-3">
+        { category.name }
+      </h1>
+      <ProductsList categoryId={category._id} />
     </div>
   );
 }

@@ -1,0 +1,13 @@
+// Loading Wrapper
+.loading-wrapper {
+  position: relative;
+}
+.loading-wrapper-element {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.5);
+  padding-top: 10%;
+}
