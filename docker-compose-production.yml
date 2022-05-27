@@ -1,0 +1,57 @@
+version: "3.7"
+
+services:
+  dgh-node:
+    container_name: "${DOCKER_APP}-node"
+    restart: "unless-stopped"
+    build: "./docker/node"
+    expose:
+      - "3000"
+    volumes:
+      - "./api/dist:/usr/src/app"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dgh-node.entrypoints=web"
+      - "traefik.http.routers.dgh-node.rule=Host(`api.${APP_DOMAIN}`)"
+      - "traefik.http.routers.dgh-node.service=dgh-node"
+      - "traefik.http.services.dgh-node.loadbalancer.server.port=3000"
+    command: "node env NODE_ENV=production bootstrap.js"
+    depends_on:
+      - dgh-mongo
+    networks:
+      - traefik-network
+  dgh-mongo:
+    container_name: "${DOCKER_APP}-mongo"
+    restart: "unless-stopped"
+    build: "./docker/mongo"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "${MONGO_USERNAME}"
+      MONGO_INITDB_ROOT_PASSWORD: "${MONGO_PASSWORD}"
+    expose:
+      - "${MONGO_PORT}"
+    volumes:
+      - ./docker/mongo/data:/data/db
+    networks:
+      - traefik-network
+    healthcheck:
+      test: echo 'db.runCommand({serverStatus:1}).ok' | mongo admin -u ${MONGO_USERNAME} -p ${MONGO_PASSWORD} --quiet | grep 1
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+  dgh-nginx:
+    container_name: "${DOCKER_APP}-nginx"
+    build: "./docker/nginx"
+    expose:
+      - "80"
+    volumes:
+      - "./admin/build:/usr/share/nginx/html"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dgh-nginx.entrypoints=web"
+      - "traefik.http.routers.dgh-nginx.rule=Host(`admin.${APP_DOMAIN}`)"
+    networks:
+      - traefik-network
+networks:
+  traefik-network:
+    external: true

@@ -1,0 +1,15 @@
+{
+  "short_name": "Admin - GH",
+  "name": "Admin Growth Hackers",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "17x17",
+      "type": "image/x-icon"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#0a6470",
+  "background_color": "#f8f8f8"
+}
